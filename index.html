@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: una sola schermata. In alto il titolo, le altre lingue e la regola da copiare; a sinistra cosa scrive l'AI e le tre domande; a destra il risultato e la scala degli otto gradini. Le misure sono in rem e la radice scala con l'altezza dello schermo, così tutto sta in una pagina. */
+/* Layout: una sola schermata. In alto il titolo, il menu delle lingue e la regola da copiare; a sinistra cosa scrive l'AI e le tre domande; a destra il risultato e la scala degli otto gradini. Le misure sono in rem e la radice scala con l'altezza dello schermo, così tutto sta in una pagina. */
 :root{
   --bg:#F3F3EE; --surface:#FFFFFF; --fg:#1A1B18; --muted:#5B5C55; --line:#D8D9CF;
   --accent:#F2C200; --focus:#1F5FD0;
@@ -74,9 +74,10 @@ header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-be
 .formula .term{box-shadow:inset 0 -.3em 0 var(--accent);padding-inline:.05em}
 .formula .coef{font-family:var(--mono);font-weight:700;font-size:.8em;margin-right:.15em}
 .formula .coef:empty{display:none}
-.langs{display:flex;gap:.3rem;align-self:center}
-.langs a{font:700 .76rem/1 var(--body);letter-spacing:.08em;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:.28rem .55rem;background:var(--surface)}
-.langs a:hover{border-color:var(--fg)}
+.langsel{align-self:center;appearance:none;-webkit-appearance:none;font:700 .76rem/1 var(--body);letter-spacing:.08em;color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:.3rem 1.5rem .3rem .6rem;cursor:pointer;background:var(--surface) no-repeat right .5rem center/.6rem url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235B5C55' stroke-width='1.6'/%3E%3C/svg%3E")}
+.langsel:hover{border-color:var(--fg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .langsel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23A3A499' stroke-width='1.6'/%3E%3C/svg%3E")}}
+:root[data-theme="dark"] .langsel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23A3A499' stroke-width='1.6'/%3E%3C/svg%3E")}
 .intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem 1.6rem;align-items:center}
 @media (max-width:860px){.intro{grid-template-columns:minmax(0,1fr)}}
 .def{font-size:.98rem;color:var(--muted);border-left:3px solid var(--accent);padding-left:.7rem}
@@ -164,7 +165,7 @@ header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-be
     <div class="titles">
       <h1 data-t="title">Quanto può scrivere l'AI</h1>
       <span class="credit" data-t="credit">Un framework di Yellow Tech</span>
-      <nav class="langs" id="langs"></nav>
+      <select class="langsel" id="langsel" aria-label="Lingua / Language"></select>
     </div>
     <div class="formula" id="formula">
       <span class="fterm"><span class="coef" id="fw-v"></span><span class="term" data-t="V">Velocità</span></span><span class="op">−</span><span class="fterm"><span class="coef" id="fw-q"></span><span class="term" data-t="Q">Qualità</span></span><span class="op">−</span><span class="fterm"><span class="coef" id="fw-p"></span><span class="term" data-t="P">Pensiero</span></span>
@@ -247,7 +248,7 @@ var LANGS = {
   it: {label:"IT", name:"Versione italiana", url:"https://antoniopisante.github.io/ai-writing-it/"},
   en: {label:"EN", name:"English version", url:"https://antoniopisante.github.io/ai-writing-en/"}
 };
-// Sulle pagine pubblicate il cambio lingua apre l'indirizzo dell'altra lingua; altrove (anteprima, artifact) cambia lingua sul posto.
+// Sulle pagine pubblicate scegliere una lingua dal menu apre il suo indirizzo; altrove (anteprima, artifact) la lingua cambia sul posto.
 var ON_PUBLIC_SITE = /(^|\.)github\.io$/.test(location.hostname);
 
 var T = {
@@ -561,8 +562,8 @@ function setLang(lang){
   fillTiles("tiles-v", "v", t("V_OPTS"));
   fillTiles("tiles-p", "p", t("P_OPTS"));
   buildLadder();
-  $("langs").innerHTML = Object.keys(LANGS).filter(function(l){ return l !== lang; }).map(function(l){
-    return '<a href="' + LANGS[l].url + '" hreflang="' + l + '" lang="' + l + '" title="' + LANGS[l].name + '" data-lang="' + l + '">' + LANGS[l].label + '</a>';
+  $("langsel").innerHTML = Object.keys(LANGS).map(function(l){
+    return '<option value="' + l + '" lang="' + l + '" title="' + LANGS[l].name + '"' + (l === lang ? " selected" : "") + '>' + LANGS[l].label + '</option>';
   }).join("");
   $("rulefallback").hidden = true;
   $("copymsg").hidden = true;
@@ -660,12 +661,13 @@ listen("tiles-p", "p");
 document.querySelectorAll('input[name="kind"]').forEach(function(r){
   r.addEventListener("change", function(){ setKind(r.value); });
 });
-$("langs").addEventListener("click", function(e){
-  var a = e.target.closest("a[data-lang]");
-  if (!a || ON_PUBLIC_SITE) return;
-  e.preventDefault();
-  setLang(a.getAttribute("data-lang"));
+$("langsel").addEventListener("change", function(e){
+  var l = e.target.value;
+  if (ON_PUBLIC_SITE) location.href = LANGS[l].url;
+  else setLang(l);
 });
+// Tornando indietro col browser, il menu deve mostrare la lingua della pagina.
+window.addEventListener("pageshow", function(){ $("langsel").value = state.lang; });
 // Il pannello della regola si chiude cliccando fuori o con Esc.
 document.addEventListener("click", function(e){
   var imp = $("import");
