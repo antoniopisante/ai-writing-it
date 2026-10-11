@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="it" data-lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quanto può scrivere l'AI</title>
+<meta name="description" content="Un framework di Yellow Tech per decidere, testo per testo, quanto può scrivere l'AI al posto tuo: Velocità − Qualità − Pensiero.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="it_IT">
+<meta property="og:title" content="Quanto può scrivere l'AI">
+<meta property="og:description" content="Un framework di Yellow Tech per decidere, testo per testo, quanto può scrivere l'AI al posto tuo: Velocità − Qualità − Pensiero.">
+<meta property="og:url" content="https://antoniopisante.github.io/ai-writing-it/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://antoniopisante.github.io/ai-writing-it/">
+<link rel="alternate" hreflang="it" href="https://antoniopisante.github.io/ai-writing-it/">
+<link rel="alternate" hreflang="en" href="https://antoniopisante.github.io/ai-writing-en/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F2C200'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='15' text-anchor='middle' fill='%231A1B18'%3EAI%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: una sola schermata. In alto il titolo, le altre lingue e la regola da copiare; a sinistra cosa scrive l'AI e le tre domande; a destra il risultato e la scala degli otto gradini. Le misure sono in rem e la radice scala con l'altezza dello schermo, così tutto sta in una pagina. */
+:root{
+  --bg:#F3F3EE; --surface:#FFFFFF; --fg:#1A1B18; --muted:#5B5C55; --line:#D8D9CF;
+  --accent:#F2C200; --focus:#1F5FD0;
+  --r-bg:#25314A; --r-ink:#F2F4F9;
+  --c-bg:#F2C200; --c-ink:#1A1B18;
+  --s-bg:#D7E5DA; --s-ink:#1A2A1F;
+  --w-bg:#E2EBFA; --w-ink:#1D3B78; --w-line:#A9BFE8;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Sans 3","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121310; --surface:#1B1C18; --fg:#ECECE4; --muted:#A3A499; --line:#35362F;
+    --accent:#F2C200; --focus:#86B4FF;
+    --r-bg:#AABBDC; --r-ink:#141A27;
+    --c-bg:#E6B800; --c-ink:#121310;
+    --s-bg:#2B4233; --s-ink:#E2EFE5;
+    --w-bg:#1B2640; --w-ink:#C6D6FF; --w-line:#3A4E7C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121310; --surface:#1B1C18; --fg:#ECECE4; --muted:#A3A499; --line:#35362F;
+  --accent:#F2C200; --focus:#86B4FF;
+  --r-bg:#AABBDC; --r-ink:#141A27;
+  --c-bg:#E6B800; --c-ink:#121310;
+  --s-bg:#2B4233; --s-ink:#E2EFE5;
+  --w-bg:#1B2640; --w-ink:#C6D6FF; --w-line:#3A4E7C;
+  color-scheme:dark;
+}
+html{font-size:clamp(12px,1.72vh,15.5px)}
+@media (max-width:860px){html{font-size:15px}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:1rem/1.4 var(--body);}
+.wrap{max-width:76rem;margin:0 auto;padding-inline:clamp(16px,2.5vw,28px);padding-block:1rem;display:grid;gap:.8rem}
+h1{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1.05;letter-spacing:-.01em;margin:0;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.lvl-R{background:var(--r-bg);color:var(--r-ink)}
+.lvl-C{background:var(--c-bg);color:var(--c-ink)}
+.lvl-S{background:var(--s-bg);color:var(--s-ink)}
+
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.3rem 1.4rem}
+.titles{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem .9rem}
+.credit{font:600 .78rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.formula{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .6rem;font-family:var(--display);font-weight:800;font-size:1.4rem}
+.formula .op{color:var(--muted);font-weight:600}
+.formula .fterm{white-space:nowrap}
+.formula .term{box-shadow:inset 0 -.3em 0 var(--accent);padding-inline:.05em}
+.formula .coef{font-family:var(--mono);font-weight:700;font-size:.8em;margin-right:.15em}
+.formula .coef:empty{display:none}
+.langs{display:flex;gap:.3rem;align-self:center}
+.langs a{font:700 .76rem/1 var(--body);letter-spacing:.08em;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:.28rem .55rem;background:var(--surface)}
+.langs a:hover{border-color:var(--fg)}
+.intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem 1.6rem;align-items:center}
+@media (max-width:860px){.intro{grid-template-columns:minmax(0,1fr)}}
+.def{font-size:.98rem;color:var(--muted);border-left:3px solid var(--accent);padding-left:.7rem}
+.def strong{color:var(--fg)}
+
+.main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1.3rem;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+.questions{display:grid;gap:.9rem;min-width:0}
+.block{display:grid;gap:.4rem;min-width:0}
+.q-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.1rem .6rem}
+.q-head .name{font-family:var(--display);font-weight:800;font-size:1.15rem}
+.q-head .q{font-size:.95rem;color:var(--fg)}
+.tiles{display:grid;gap:.4rem}
+.tiles.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tiles.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:560px){.tiles.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{position:relative;display:grid;gap:.1rem;align-content:start;padding:.45rem .65rem;border:1px solid var(--line);border-radius:.5rem;background:var(--surface);cursor:pointer;min-width:0}
+.tile input,.seg input{position:absolute;opacity:0;pointer-events:none}
+.tile .tn{display:flex;gap:.4rem;align-items:baseline}
+.tile .tn b{font-family:var(--mono);font-size:1.05rem}
+.tile .tn strong{font-size:.95rem}
+.tile .td{font-size:.84rem;color:var(--muted);line-height:1.3}
+.tile:has(input:checked){border-color:var(--fg);box-shadow:0 0 0 1px var(--fg)}
+.tile:has(input:focus-visible),.seg label:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:2px}
+.tile:has(input:disabled){opacity:.45;cursor:not-allowed}
+.hint{font-size:.84rem;color:var(--muted);line-height:1.35}
+.hint strong{color:var(--fg);font-weight:600}
+.seg-row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .8rem}
+.seg-row .name{font-family:var(--display);font-weight:800;font-size:1.15rem}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;gap:3px}
+.seg label{position:relative;padding:.3rem .9rem;border-radius:999px;cursor:pointer;font-weight:600;font-size:.95rem}
+.seg label:has(input:checked){background:var(--fg);color:var(--bg)}
+
+.side{display:grid;gap:.6rem;min-width:0}
+.result{background:var(--surface);border:1px solid var(--line);border-radius:.75rem;padding:.75rem .9rem;display:grid;gap:.5rem}
+.calcline{font-family:var(--mono);font-size:.95rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:baseline;font-variant-numeric:tabular-nums}
+.calcline .lab{font-family:var(--body);font-size:.82rem;color:var(--muted)}
+.calcline .tot{font-size:1.7rem;font-weight:700;margin-left:.15rem}
+.wtoggle{margin-left:auto;align-self:center;font:700 .8rem/1.2 var(--body);background:var(--w-bg);color:var(--w-ink);border:1px solid var(--w-line);border-radius:999px;padding:.25rem .75rem;cursor:pointer;white-space:nowrap}
+.wtoggle::after{content:" ▾";font-size:.85em}
+.wtoggle[aria-expanded="true"]{border-color:var(--w-ink)}
+.wtoggle[aria-expanded="true"]::after{content:" ▴"}
+.weights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem .9rem;padding:.5rem .75rem .6rem;border:1px solid var(--w-line);border-radius:.5rem;background:var(--w-bg);color:var(--w-ink)}
+.wg{display:grid;gap:.1rem;min-width:0;cursor:pointer}
+.wg .wh{display:flex;justify-content:space-between;gap:.4rem;font-size:.82rem;font-weight:600}
+.wg .wh b{font-family:var(--mono);font-weight:700}
+.wg input{width:100%;margin:0;accent-color:var(--w-ink);cursor:pointer}
+.wg:has(input:disabled){opacity:.45;cursor:not-allowed}
+.wnote{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;gap:.8rem;font-size:.8rem;line-height:1.3}
+.linkbtn{font:600 .8rem var(--body);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer;white-space:nowrap}
+.verdict{border-radius:.5rem;padding:.55rem .75rem;display:grid;gap:.2rem}
+.verdict .vtop{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem}
+.verdict .vname{font-family:var(--display);font-weight:800;font-size:1.4rem}
+.verdict .vstep{font-family:var(--mono);font-size:.85rem}
+.verdict p{font-size:.95rem}
+.disclose{font-size:.9rem;line-height:1.35;padding:.45rem .65rem;border-left:3px solid var(--accent);background:var(--bg);color:var(--fg);border-radius:.35rem}
+
+.ladder{display:grid;gap:.4rem}
+.band-block{border-radius:.65rem;padding:.4rem;display:grid;gap:.05rem}
+.band-block .bh{display:flex;justify-content:space-between;gap:.5rem;font-weight:700;font-size:.88rem;padding:.05rem .4rem .2rem}
+.band-block .bh span:last-child{font-family:var(--mono);font-weight:500;font-size:.8rem}
+.step{display:grid;grid-template-columns:2.3em minmax(0,1fr);gap:.4rem;padding:.2rem .4rem;border-radius:.4rem;font-size:.88rem;line-height:1.28}
+.step .sv{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+.step.cur{background:var(--surface);color:var(--fg);box-shadow:0 0 0 2px var(--fg)}
+.autonote{font-size:.82rem;padding:.2rem .4rem .1rem;opacity:.9}
+
+/* La regola da copiare: un pulsante giallo accanto all'introduzione, che apre un pannello sopra la pagina senza spostare niente. */
+.import{position:relative;justify-self:end}
+@media (max-width:860px){.import{justify-self:stretch}}
+.import summary{list-style:none;display:inline-flex;align-items:center;gap:.4rem;background:var(--accent);color:#1A1B18;font-weight:700;font-size:.95rem;padding:.5rem 1rem;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.import summary::-webkit-details-marker{display:none}
+.import summary::after{content:"▾";font-size:.85em}
+.import[open] summary::after{content:"▴"}
+.import .ibody{position:absolute;right:0;top:calc(100% + .5rem);z-index:20;width:min(25rem,calc(100vw - 32px));display:grid;gap:.55rem;justify-items:start;padding:.8rem .95rem;background:var(--surface);border:2px solid var(--accent);border-radius:.75rem;box-shadow:0 12px 32px rgba(0,0,0,.2)}
+@media (max-width:860px){.import .ibody{position:static;width:auto;margin-top:.5rem;box-shadow:none}}
+.import .ibody p{font-size:.9rem;color:var(--fg);line-height:1.38}
+.copybtn{font:600 .9rem var(--body);background:var(--fg);color:var(--bg);border:0;border-radius:999px;padding:.35rem 1rem;cursor:pointer}
+.rulefallback{width:100%;height:8rem;font:.78rem/1.35 var(--mono);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:.4rem;padding:.4rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="titles">
+      <h1 data-t="title">Quanto può scrivere l'AI</h1>
+      <span class="credit" data-t="credit">Un framework di Yellow Tech</span>
+      <nav class="langs" id="langs"></nav>
+    </div>
+    <div class="formula" id="formula">
+      <span class="fterm"><span class="coef" id="fw-v"></span><span class="term" data-t="V">Velocità</span></span><span class="op">−</span><span class="fterm"><span class="coef" id="fw-q"></span><span class="term" data-t="Q">Qualità</span></span><span class="op">−</span><span class="fterm"><span class="coef" id="fw-p"></span><span class="term" data-t="P">Pensiero</span></span>
+    </div>
+  </header>
+  <div class="intro">
+    <p class="def" data-th="def"></p>
+    <details class="import" id="import">
+      <summary data-t="impSummary">Importa questa regola nella tua AI</summary>
+      <div class="ibody">
+        <p data-t="impText"></p>
+        <button type="button" class="copybtn" id="copyrule" data-t="impBtn">Copia la regola</button>
+        <p id="copymsg" data-t="impFail" hidden></p>
+        <textarea class="rulefallback" id="rulefallback" readonly hidden></textarea>
+      </div>
+    </details>
+  </div>
+
+  <div class="main">
+    <div class="questions">
+      <div class="seg-row">
+        <span class="name" data-t="kindQ">Cosa deve scrivere l'AI?</span>
+        <div class="seg" role="radiogroup" id="kind-group">
+          <label><input type="radio" name="kind" id="kind-testo" value="testo"><span data-t="kindText">Testo o presentazione</span></label>
+          <label><input type="radio" name="kind" id="kind-codice" value="codice"><span data-t="kindCode">Codice</span></label>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="q-head"><span class="name" data-t="V">Velocità</span><span class="q" data-t="vQ"></span></div>
+        <div class="tiles four" id="tiles-v" role="radiogroup"></div>
+        <span class="hint" data-t="vHint1"></span>
+        <span class="hint" data-th="vHint2"></span>
+      </div>
+
+      <div class="block">
+        <div class="q-head"><span class="name" data-t="Q">Qualità</span><span class="q" id="question-q"></span></div>
+        <div class="tiles grid2" id="tiles-q" role="radiogroup"></div>
+        <span class="hint" id="hint-q"></span>
+      </div>
+
+      <div class="block">
+        <div class="q-head"><span class="name" data-t="P">Pensiero</span><span class="q" data-t="pQ"></span></div>
+        <div class="tiles grid2" id="tiles-p" role="radiogroup"></div>
+        <span class="hint" id="hint-p" data-t="pHint" hidden></span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="result" aria-live="polite">
+        <div class="calcline" id="calcline">
+          <span class="lab" data-t="V">Velocità</span><span id="rv">0</span><span>−</span>
+          <span class="lab" data-t="Q">Qualità</span><span id="rq">0</span><span>−</span>
+          <span class="lab" data-t="P">Pensiero</span><span id="rp">0</span><span>=</span>
+          <span id="rraw" hidden></span>
+          <span class="tot" id="rs">0</span>
+          <button type="button" class="wtoggle" id="wtoggle" aria-expanded="false" aria-controls="weights" data-t="wToggle">Modifica i pesi</button>
+        </div>
+        <div class="weights" id="weights" hidden>
+          <label class="wg"><span class="wh"><span data-t="V">Velocità</span><b id="wo-v">×1</b></span><input type="range" id="w-v" min="0" max="4" step="1" value="2"></label>
+          <label class="wg"><span class="wh"><span data-t="Q">Qualità</span><b id="wo-q">×1</b></span><input type="range" id="w-q" min="0" max="4" step="1" value="2"></label>
+          <label class="wg"><span class="wh"><span data-t="P">Pensiero</span><b id="wo-p">×1</b></span><input type="range" id="w-p" min="0" max="4" step="1" value="2"></label>
+          <p class="wnote" id="wnote" hidden><span data-t="wNote"></span><button type="button" class="linkbtn" id="wreset" data-t="wReset">Pesi uguali</button></p>
+        </div>
+        <div class="verdict" id="verdict">
+          <div class="vtop"><span class="vname" id="vname"></span><span class="vstep" id="vstep"></span></div>
+          <p id="vdesc"></p>
+        </div>
+        <p class="disclose" id="disclose" hidden></p>
+      </div>
+      <div class="ladder" id="ladder"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var W_STEPS = [0.5, 0.75, 1, 1.5, 2];
+// Ogni lingua ha il suo indirizzo pubblico. Per aggiungerne una basta una voce qui e i suoi testi in T e RULE.
+var LANGS = {
+  it: {label:"IT", name:"Versione italiana", url:"https://antoniopisante.github.io/ai-writing-it/"},
+  en: {label:"EN", name:"English version", url:"https://antoniopisante.github.io/ai-writing-en/"}
+};
+// Sulle pagine pubblicate il cambio lingua apre l'indirizzo dell'altra lingua; altrove (anteprima, artifact) cambia lingua sul posto.
+var ON_PUBLIC_SITE = /(^|\.)github\.io$/.test(location.hostname);
+
+var T = {
+  it: {
+    dec: ",",
+    title: "Quanto può scrivere l'AI",
+    credit: "Un framework di Yellow Tech",
+    V: "Velocità", Q: "Qualità", P: "Pensiero",
+    formulaAria: "Velocità meno qualità meno pensiero",
+    def: "L'AI si usa sempre per leggere, cercare, analizzare, fare brainstorming e ricevere critiche. Questo calcolo serve quando deve <strong>scrivere al posto tuo</strong> un testo o un codice che altri leggeranno o useranno: rispondi alle tre domande e il risultato indica quanto può scrivere.",
+    kindQ: "Cosa deve scrivere l'AI?",
+    kindText: "Testo o presentazione",
+    kindCode: "Codice",
+    vQ: "Senza AI, quanto tempo ti servirebbe?",
+    vHint1: "Conta il tempo che ci metteresti tu, in minuti e ore: dieci minuti restano pochi anche se l'AI ne impiega uno.",
+    vHint2: "<strong>Un testo alla volta:</strong> cento risposte diverse sono cento calcoli. Se invece partono tutte da una base comune, la base conta come un testo letto da molti, e l'adattamento si calcola su tutte insieme.",
+    pQ: "Dovrai presentarlo o difenderlo di persona?",
+    pHint: "Per il codice vale 0: quanto devi capirlo lo dicono già i gradini.",
+    step: "Gradino",
+    wToggle: "Modifica i pesi",
+    wNote: "I gradini sono tarati sui pesi uguali. Con pesi diversi il risultato va al gradino più vicino e, a metà strada, a quello più prudente.",
+    wReset: "Pesi uguali",
+    wAria: {v:"Peso della Velocità", q:"Peso della Qualità", p:"Peso del Pensiero"},
+    ladderAria: "Gli otto gradini",
+    kindAria: "Cosa deve scrivere l'AI",
+    impSummary: "Importa questa regola nella tua AI",
+    impText: "Copia la regola e incollala nelle istruzioni della tua AI: il prompt di sistema, le istruzioni personalizzate o quelle di un progetto. Prima di scrivere al posto tuo, ti farà le tre domande e si fermerà al gradino giusto. Se hai cambiato i pesi, li trova già dentro.",
+    impBtn: "Copia la regola",
+    impDone: "Copiata ✓",
+    impFail: "Da qui non riesco a copiare: seleziona il testo qui sotto e copialo tu.",
+    V_OPTS: [
+      {n:0, name:"Minuti", d:"Te la cavi in pochi minuti."},
+      {n:1, name:"Meno di un'ora", d:"Ci vuole un po', ma meno di un'ora."},
+      {n:2, name:"Ore o giorni", d:"Ci vogliono ore di lavoro, o giorni."},
+      {n:3, name:"Non fattibile", d:"Non hai quel tempo, o a mano non lo faresti mai."}
+    ],
+    Q_OPTS: {
+      testo: [
+        {n:0, name:"Niente", d:"Il contenuto c'è già e va solo messo in forma, oppure la differenza non conta per nessuno."},
+        {n:1, name:"Poco", d:"Il testo viene più generico, ma serve lo stesso allo scopo."},
+        {n:2, name:"Abbastanza", d:"Manca il tuo giudizio, e chi lo riceve se ne accorge."},
+        {n:3, name:"Molto", d:"Senza il tuo giudizio il testo fallisce, con chi conta molto o davanti a molte persone."}
+      ],
+      codice: [
+        {n:0, name:"Niente", d:"Un errore non costa niente: se si rompe, nessuno ci rimette."},
+        {n:1, name:"Poco", d:"Un errore costa poco e si corregge in fretta."},
+        {n:2, name:"Abbastanza", d:"Un errore pesa su chi lo usa, colleghi o clienti."},
+        {n:3, name:"Molto", d:"Un errore costa caro: dati, soldi, sicurezza o un cliente importante."}
+      ]
+    },
+    Q_QUESTION: {
+      testo: "Se lo scrive l'AI invece di te, quanto ci rimetti?",
+      codice: "Se lo scrive l'AI e c'è un errore che non hai visto, quanto costa a chi lo usa?"
+    },
+    Q_HINT: {
+      testo: "Confronta con la tua versione migliore, come se avessi tutto il tempo che serve: al tempo pensa la Velocità.",
+      codice: "Pensa a chi lo userà e a cosa succede se smette di funzionare."
+    },
+    P_OPTS: [
+      {n:0, name:"No", d:"Viene letto e basta, o lo presenta qualcun altro."},
+      {n:1, name:"Sì", d:"Lo presenterai o ne risponderai a voce: scriverlo ti serve per costruire il ragionamento."}
+    ],
+    BANDS: {
+      S: {name:"Scrive l'AI", range:"da +1 a +3"},
+      C: {name:"Scrivete insieme", range:"0 e −1"},
+      R: {name:"Scrivi tu", range:"da −2 a −4"}
+    },
+    STEPS: {
+      "3":  {testo:"L'AI scrive tutto. Prima di consegnare, dai una lettura veloce.",
+             codice:"L'AI scrive tutto il codice. Puoi anche non conoscerlo, ma dichiaralo."},
+      "2":  {testo:"L'AI scrive tutto. Tu verifichi fatti, nomi e numeri.",
+             codice:"L'AI scrive tutto il codice. Tu sai come funziona e lo verifichi con i test."},
+      "1":  {testo:"L'AI scrive la prima versione. Tu la rileggi per intero e correggi contenuto e tono.",
+             codice:"L'AI scrive tutto il codice. Tu lo capisci riga per riga e sai spiegarlo."},
+      "0":  {testo:"Struttura e messaggi li decidi tu. L'AI scrive bozze o parti, e tu rivedi ogni frase.",
+             codice:"L'architettura la decidi tu. L'AI scrive il codice al suo interno, e tu rivedi ogni riga con i test e la revisione di un collega."},
+      "-1": {testo:"L'AI ti prepara una base. Il testo finale lo scrivi tu, con parole tue.",
+             codice:"Le parti critiche le scrivi tu. L'AI scrive il resto, e tu rivedi ogni riga."},
+      "-2": {testo:"L'AI legge e critica: cosa non regge, cosa manca, dove sbagli. Le modifiche le fai tu.",
+             codice:"L'AI suggerisce, cerca bug e rivede il tuo codice."},
+      "-3": {testo:"L'AI segnala solo errori: fatti, numeri, refusi. Le correzioni le fai tu.",
+             codice:"L'AI rivede il tuo codice e segnala i problemi."},
+      "-4": {testo:"L'AI corregge solo refusi, accenti e grammatica.",
+             codice:"L'AI controlla solo errori evidenti e stile."}
+    },
+    AUTONOTE: "Se l'AI scrive in automatico e su larga scala, controlli a intervalli regolari un campione di quello che produce.",
+    DISCLOSE: {
+      testo: "Se chi lo legge penserà che l'hai scritto tu, devi poter rispondere di ogni frase come se fosse tua. Se non puoi, dillo.",
+      codice: "Se chi lo usa o lo rivede penserà che l'hai scritto tu, devi poter rispondere di ogni riga. Se non puoi, dillo."
+    }
+  },
+  en: {
+    dec: ".",
+    title: "How much can AI write?",
+    credit: "A Yellow Tech framework",
+    V: "Speed", Q: "Quality", P: "Thinking",
+    formulaAria: "Speed minus quality minus thinking",
+    def: "Always use AI to read, search, analyze, brainstorm and get feedback. This calculation is for when AI has to <strong>write on your behalf</strong> a text or code that other people will read or use: answer the three questions and the result shows how much it can write.",
+    kindQ: "What will the AI write?",
+    kindText: "Text or slides",
+    kindCode: "Code",
+    vQ: "Without AI, how long would it take you?",
+    vHint1: "Count the time it would take you, in minutes and hours: ten minutes are still few, even if AI takes one.",
+    vHint2: "<strong>One text at a time:</strong> a hundred different replies are a hundred calculations. If they all start from a common base, score the base as a text read by many people, and the adaptation across all of them together.",
+    pQ: "Will you present it or defend it in person?",
+    pHint: "For code it's 0: the steps already say how well you need to understand it.",
+    step: "Step",
+    wToggle: "Edit weights",
+    wNote: "The steps are calibrated on equal weights. With different weights the result goes to the nearest step and, when halfway, to the more cautious one.",
+    wReset: "Equal weights",
+    wAria: {v:"Speed weight", q:"Quality weight", p:"Thinking weight"},
+    ladderAria: "The eight steps",
+    kindAria: "What will the AI write",
+    impSummary: "Import this rule into your AI",
+    impText: "Copy the rule and paste it into your AI's instructions: the system prompt, custom instructions or project instructions. Before writing on your behalf, it will ask you the three questions and stop at the right step. If you changed the weights, they're already included.",
+    impBtn: "Copy the rule",
+    impDone: "Copied ✓",
+    impFail: "Copying doesn't work from here: select the text below and copy it yourself.",
+    V_OPTS: [
+      {n:0, name:"Minutes", d:"You can do it in a few minutes."},
+      {n:1, name:"Under an hour", d:"It takes a while, but less than an hour."},
+      {n:2, name:"Hours or days", d:"It takes hours of work, or days."},
+      {n:3, name:"Not feasible", d:"You don't have that time, or you'd never do it by hand."}
+    ],
+    Q_OPTS: {
+      testo: [
+        {n:0, name:"Nothing", d:"The content already exists and just needs shaping, or the difference matters to no one."},
+        {n:1, name:"A little", d:"The text comes out more generic, but it still does the job."},
+        {n:2, name:"Quite a lot", d:"Your judgment is missing, and the reader notices."},
+        {n:3, name:"A lot", d:"Without your judgment the text fails, with someone who matters a lot or in front of many people."}
+      ],
+      codice: [
+        {n:0, name:"Nothing", d:"A bug costs nothing: if it breaks, nobody loses out."},
+        {n:1, name:"A little", d:"A bug costs little and is quickly fixed."},
+        {n:2, name:"Quite a lot", d:"A bug hurts the people who use it, colleagues or clients."},
+        {n:3, name:"A lot", d:"A bug is expensive: data, money, security or an important client."}
+      ]
+    },
+    Q_QUESTION: {
+      testo: "If AI writes it instead of you, how much is lost?",
+      codice: "If AI writes it and there's a bug you missed, how much does it cost the people who use it?"
+    },
+    Q_HINT: {
+      testo: "Compare it with your best version, as if you had all the time you need: Speed already takes care of time.",
+      codice: "Think about who will use it and what happens if it stops working."
+    },
+    P_OPTS: [
+      {n:0, name:"No", d:"It just gets read, or someone else presents it."},
+      {n:1, name:"Yes", d:"You'll present it or answer for it out loud: writing it is how you build the reasoning."}
+    ],
+    BANDS: {
+      S: {name:"AI writes", range:"+1 to +3"},
+      C: {name:"You write together", range:"0 and −1"},
+      R: {name:"You write", range:"−2 to −4"}
+    },
+    STEPS: {
+      "3":  {testo:"AI writes all of it. Give it a quick read before you send it.",
+             codice:"AI writes all the code. You don't even need to know it, but say so."},
+      "2":  {testo:"AI writes all of it. You check facts, names and numbers.",
+             codice:"AI writes all the code. You know how it works and verify it with tests."},
+      "1":  {testo:"AI writes the first version. You reread all of it and fix content and tone.",
+             codice:"AI writes all the code. You understand it line by line and can explain it."},
+      "0":  {testo:"You decide the structure and the messages. AI writes drafts or parts, and you review every sentence.",
+             codice:"You decide the architecture. AI writes the code within it, and you review every line with tests and a colleague's review."},
+      "-1": {testo:"AI prepares a base for you. You write the final text, in your own words.",
+             codice:"You write the critical parts. AI writes the rest, and you review every line."},
+      "-2": {testo:"AI reads and critiques: what doesn't hold up, what's missing, where you're wrong. You make the changes.",
+             codice:"AI suggests, hunts for bugs and reviews your code."},
+      "-3": {testo:"AI flags errors only: facts, numbers, typos. You make the corrections.",
+             codice:"AI reviews your code and flags problems."},
+      "-4": {testo:"AI fixes only typos and grammar.",
+             codice:"AI checks only obvious errors and style."}
+    },
+    AUTONOTE: "If AI writes automatically and at scale, check a sample of what it produces at regular intervals.",
+    DISCLOSE: {
+      testo: "If the reader will think you wrote it, you must be able to answer for every sentence as your own. If you can't, say so.",
+      codice: "If whoever uses or reviews it will think you wrote it, you must be able to answer for every line. If you can't, say so."
+    }
+  }
+};
+
+// La regola da incollare nelle istruzioni di un chatbot: segue la pagina gradino per gradino, nella lingua scelta e con i pesi scelti.
+var RULE = {
+  it: function(formula, weighted){
+    return [
+      "# Regola: quanto può scrivere l'AI",
+      "Framework di Yellow Tech: " + LANGS.it.url,
+      "",
+      "Per leggere, cercare, analizzare, fare brainstorming e criticare i miei testi non serve nessun calcolo: fallo sempre.",
+      "",
+      "Questa regola vale quando ti chiedo di scrivere al posto mio un testo, una presentazione o del codice che altri leggeranno o useranno. Prima di scrivere:",
+      "",
+      "1. Stabilisci tre valori dal contesto. Se uno non è chiaro, chiedimelo prima di scrivere.",
+      "- Velocità (da 0 a 3): senza AI, quanto tempo mi servirebbe? 0 pochi minuti. 1 meno di un'ora. 2 ore o giorni. 3 non ho quel tempo, o a mano non lo farei mai.",
+      "- Qualità (da 0 a 3), per un testo: se lo scrivi tu invece di me, quanto ci rimetto rispetto alla mia versione migliore, come se avessi tutto il tempo che serve? 0 niente: il contenuto c'è già e va solo messo in forma, oppure la differenza non conta per nessuno. 1 poco: viene più generico, ma serve lo stesso allo scopo. 2 abbastanza: manca il mio giudizio, e chi lo riceve se ne accorge. 3 molto: senza il mio giudizio il testo fallisce, con chi conta molto o davanti a molte persone.",
+      "- Qualità (da 0 a 3), per il codice: se c'è un errore che non ho visto, quanto costa a chi lo usa? 0 niente: se si rompe, nessuno ci rimette. 1 poco, e si corregge in fretta. 2 pesa su chi lo usa, colleghi o clienti. 3 costa caro: dati, soldi, sicurezza o un cliente importante.",
+      "- Pensiero (0 o 1), solo per i testi: lo presenterò o ne risponderò di persona? 1 se sì. Per il codice vale sempre 0.",
+      "",
+      "2. Calcola " + formula + ". Il risultato va da +3 a −4." + (weighted ? " Se non è intero, arrotonda al gradino più vicino; a metà strada scegli quello più basso." : ""),
+      "",
+      "3. Dimmi il calcolo e il gradino in una riga, poi comportati così.",
+      "+3. Testo: scrivi tutto, e ricordami di dare una lettura veloce prima di consegnare. Codice: scrivi tutto; posso anche non conoscerlo, ma devo dichiararlo.",
+      "+2. Testo: scrivi tutto, ed elencami i fatti, i nomi e i numeri da verificare. Codice: scrivi tutto; io devo sapere come funziona e verificarlo con i test.",
+      "+1. Testo: scrivi la prima versione; io la rileggo per intero e correggo contenuto e tono. Codice: scrivi tutto; io devo capirlo riga per riga e saperlo spiegare.",
+      "0. Testo: chiedimi prima struttura e messaggi; poi scrivi bozze o parti dentro quella struttura, e io rivedo ogni frase. Codice: chiedimi l'architettura; poi scrivi il codice al suo interno, e io rivedo ogni riga con i test e la revisione di un collega.",
+      "−1. Testo: preparami una base, cioè punti, scaletta e materiali, senza il testo finale: quello lo scrivo io, con parole mie. Codice: le parti critiche le scrivo io; tu scrivi il resto, e io rivedo ogni riga.",
+      "−2. Testo: il testo lo scrivo io. Quando te lo mando, leggilo e criticalo: cosa non regge, cosa manca, dove sbaglio. Le modifiche le faccio io. Codice: suggerisci, cerca bug e rivedi il mio codice.",
+      "−3. Testo: il testo lo scrivo io. Quando te lo mando, segnala solo errori di fatti, numeri e refusi, senza riscrivere. Codice: rivedi il mio codice e segnala i problemi.",
+      "−4. Testo: il testo lo scrivo io. Correggi solo refusi, accenti e grammatica. Codice: controlla solo errori evidenti e stile.",
+      "",
+      "4. Un testo alla volta: cento risposte diverse sono cento calcoli. Se partono tutte da una base comune, la base conta come un testo letto da molti, e l'adattamento si calcola su tutte insieme.",
+      "5. Se scrivi in automatico e su larga scala, ricordami di controllare a intervalli regolari un campione di quello che produci.",
+      "6. Ai gradini +2 e +3, ricordami che se chi legge penserà che l'ho scritto io, devo poter rispondere di ogni frase come se fosse mia; se non posso, devo dirlo.",
+      "7. Se ti chiedo di andare oltre il gradino, ricordamelo una volta. Poi decido io."
+    ].join("\n");
+  },
+  en: function(formula, weighted){
+    return [
+      "# Rule: how much can AI write",
+      "A Yellow Tech framework: " + LANGS.en.url,
+      "",
+      "Reading, searching, analyzing, brainstorming and critiquing my texts need no calculation: always do them.",
+      "",
+      "This rule applies when I ask you to write on my behalf a text, a slide deck or code that other people will read or use. Before writing:",
+      "",
+      "1. Set three values from the context. If one isn't clear, ask me before writing.",
+      "- Speed (0 to 3): without AI, how long would it take me? 0 a few minutes. 1 under an hour. 2 hours or days. 3 I don't have that time, or I'd never do it by hand.",
+      "- Quality (0 to 3), for a text: if you write it instead of me, how much is lost compared with my best version, as if I had all the time I need? 0 nothing: the content already exists and just needs shaping, or the difference matters to no one. 1 a little: it comes out more generic, but it still does the job. 2 quite a lot: my judgment is missing, and the reader notices. 3 a lot: without my judgment the text fails, with someone who matters a lot or in front of many people.",
+      "- Quality (0 to 3), for code: if there's a bug I missed, how much does it cost the people who use it? 0 nothing: if it breaks, nobody loses out. 1 a little, and it's quickly fixed. 2 it hurts the people who use it, colleagues or clients. 3 it's expensive: data, money, security or an important client.",
+      "- Thinking (0 or 1), texts only: will I present it or answer for it in person? 1 if yes. For code it's always 0.",
+      "",
+      "2. Compute " + formula + ". The result goes from +3 to −4." + (weighted ? " If it isn't a whole number, round to the nearest step; when halfway, pick the lower one." : ""),
+      "",
+      "3. Tell me the calculation and the step in one line, then act as follows.",
+      "+3. Text: write all of it, and remind me to give it a quick read before sending it. Code: write all of it; I don't even need to know it, but I must say so.",
+      "+2. Text: write all of it, and list the facts, names and numbers I need to check. Code: write all of it; I must know how it works and verify it with tests.",
+      "+1. Text: write the first version; I reread all of it and fix content and tone. Code: write all of it; I must understand it line by line and be able to explain it.",
+      "0. Text: first ask me for the structure and the messages; then write drafts or parts within that structure, and I review every sentence. Code: ask me for the architecture; then write the code within it, and I review every line with tests and a colleague's review.",
+      "−1. Text: prepare a base for me, meaning points, an outline and materials, without the final text: I write that, in my own words. Code: I write the critical parts; you write the rest, and I review every line.",
+      "−2. Text: I write the text. When I send it to you, read it and critique it: what doesn't hold up, what's missing, where I'm wrong. I make the changes. Code: suggest, hunt for bugs and review my code.",
+      "−3. Text: I write the text. When I send it to you, flag only errors in facts, numbers and typos, without rewriting. Code: review my code and flag problems.",
+      "−4. Text: I write the text. Fix only typos and grammar. Code: check only obvious errors and style.",
+      "",
+      "4. One text at a time: a hundred different replies are a hundred calculations. If they all start from a common base, score the base as a text read by many people, and the adaptation across all of them together.",
+      "5. If you write automatically and at scale, remind me to check a sample of your output at regular intervals.",
+      "6. At steps +2 and +3, remind me that if the reader will think I wrote it, I must be able to answer for every sentence as my own; if I can't, I must say so.",
+      "7. If I ask you to go beyond the step, remind me once. Then it's my call."
+    ].join("\n");
+  }
+};
+
+function $(id){ return document.getElementById(id); }
+function t(key){ return T[state.lang][key]; }
+function band(s){ return s >= 1 ? "S" : (s >= -1 ? "C" : "R"); }
+function num(x){ return String(x).replace(".", t("dec")); }
+function fmt(n){ return n > 0 ? "+" + num(n) : (n < 0 ? "−" + num(Math.abs(n)) : "0"); }
+// Con pesi diversi da 1 il punteggio può non essere intero: va al gradino più vicino, a metà strada verso il più basso, e resta fra −4 e +3.
+function toStep(x){ return Math.min(3, Math.max(-4, Math.ceil(x - 0.5))); }
+
+function startLang(){
+  var l = document.documentElement.getAttribute("data-lang");
+  if (!LANGS[l]) { try { l = new URLSearchParams(location.search).get("lang"); } catch (e) {} }
+  return LANGS[l] ? l : "it";
+}
+var state = {lang:startLang(), kind:"testo", v:2, q:3, p:1, pText:1, w:{v:1, q:1, p:1}};
+
+function tileHTML(key, o){
+  var id = key + "-" + o.n;
+  return '<label class="tile" for="' + id + '"><input type="radio" name="' + key + '" id="' + id + '" value="' + o.n + '">' +
+    '<span class="tn"><b>' + o.n + '</b><strong>' + o.name + '</strong></span><span class="td">' + o.d + '</span></label>';
+}
+function fillTiles(boxId, key, opts){
+  $(boxId).innerHTML = opts.map(function(o){ return tileHTML(key, o); }).join("");
+}
+function listen(boxId, key){
+  $(boxId).addEventListener("change", function(e){
+    if (e.target.name !== key) return;
+    state[key] = Number(e.target.value);
+    if (key === "p" && state.kind === "testo") state.pText = state.p;
+    render();
+  });
+}
+
+function buildLadder(){
+  var html = "", B_ = t("BANDS");
+  ["S","C","R"].forEach(function(B){
+    var scores = B === "S" ? [3,2,1] : (B === "C" ? [0,-1] : [-2,-3,-4]);
+    html += '<div class="band-block lvl-' + B + '"><div class="bh"><span>' + B_[B].name + '</span><span>' + B_[B].range + '</span></div>';
+    scores.forEach(function(s){
+      html += '<div class="step" data-s="' + s + '"><span class="sv">' + fmt(s) + '</span><span class="st"></span></div>';
+    });
+    if (B === "S") html += '<div class="autonote">' + t("AUTONOTE") + '</div>';
+    html += '</div>';
+  });
+  $("ladder").innerHTML = html;
+}
+
+function setLang(lang){
+  state.lang = lang;
+  document.documentElement.lang = lang;
+  document.title = t("title");
+  document.querySelectorAll("[data-t]").forEach(function(el){ el.textContent = t(el.getAttribute("data-t")); });
+  document.querySelectorAll("[data-th]").forEach(function(el){ el.innerHTML = t(el.getAttribute("data-th")); });
+  $("formula").setAttribute("aria-label", t("formulaAria"));
+  $("kind-group").setAttribute("aria-label", t("kindAria"));
+  $("tiles-v").setAttribute("aria-label", t("V"));
+  $("tiles-q").setAttribute("aria-label", t("Q"));
+  $("tiles-p").setAttribute("aria-label", t("P"));
+  $("ladder").setAttribute("aria-label", t("ladderAria"));
+  ["v","q","p"].forEach(function(k){ $("w-" + k).setAttribute("aria-label", t("wAria")[k]); });
+  fillTiles("tiles-v", "v", t("V_OPTS"));
+  fillTiles("tiles-p", "p", t("P_OPTS"));
+  buildLadder();
+  $("langs").innerHTML = Object.keys(LANGS).filter(function(l){ return l !== lang; }).map(function(l){
+    return '<a href="' + LANGS[l].url + '" hreflang="' + l + '" lang="' + l + '" title="' + LANGS[l].name + '" data-lang="' + l + '">' + LANGS[l].label + '</a>';
+  }).join("");
+  $("rulefallback").hidden = true;
+  $("copymsg").hidden = true;
+  setKind(state.kind);
+}
+
+function setKind(kind){
+  state.kind = kind;
+  fillTiles("tiles-q", "q", t("Q_OPTS")[kind]);
+  $("question-q").textContent = t("Q_QUESTION")[kind];
+  $("hint-q").textContent = t("Q_HINT")[kind];
+  var isCode = kind === "codice";
+  state.p = isCode ? 0 : state.pText;
+  $("p-1").disabled = isCode;
+  $("w-p").disabled = isCode;
+  $("hint-p").hidden = !isCode;
+  render();
+}
+
+function render(){
+  var w = state.w;
+  var raw = w.v * state.v - w.q * state.q - w.p * state.p;
+  var s = toStep(raw), B = band(s);
+  ["v","q","p"].forEach(function(k){
+    var el = $(k + "-" + state[k]); if (el) el.checked = true;
+    var weighted = w[k] !== 1 && !(k === "p" && state.kind === "codice");
+    $("r" + k).textContent = state[k] + (weighted ? "×" + num(w[k]) : "");
+    $("fw-" + k).textContent = weighted ? num(w[k]) + "×" : "";
+    $("wo-" + k).textContent = "×" + num(w[k]);
+    var sl = $("w-" + k);
+    sl.value = W_STEPS.indexOf(w[k]);
+    sl.setAttribute("aria-valuetext", "×" + num(w[k]));
+  });
+  $("kind-" + state.kind).checked = true;
+  var rraw = $("rraw");
+  rraw.hidden = raw === s;
+  rraw.textContent = fmt(raw) + " →";
+  $("rs").textContent = fmt(s);
+  $("wnote").hidden = w.v === 1 && w.q === 1 && w.p === 1;
+  $("verdict").className = "verdict lvl-" + B;
+  $("vname").textContent = t("BANDS")[B].name;
+  $("vstep").textContent = t("step") + " " + fmt(s);
+  $("vdesc").textContent = t("STEPS")[String(s)][state.kind];
+  var dis = $("disclose");
+  dis.hidden = s < 2;
+  dis.textContent = t("DISCLOSE")[state.kind];
+  document.querySelectorAll(".step").forEach(function(el){
+    var k = el.getAttribute("data-s");
+    el.querySelector(".st").textContent = t("STEPS")[k][state.kind];
+    el.classList.toggle("cur", Number(k) === s);
+  });
+}
+
+function ruleText(){
+  var w = state.w;
+  var formula = ["v","q","p"].map(function(k){
+    return (w[k] !== 1 ? num(w[k]) + " × " : "") + t(k.toUpperCase());
+  }).join(" − ");
+  return RULE[state.lang](formula, w.v !== 1 || w.q !== 1 || w.p !== 1);
+}
+
+function copyRule(){
+  var text = ruleText(), btn = $("copyrule");
+  function done(){
+    $("rulefallback").hidden = true;
+    $("copymsg").hidden = true;
+    btn.textContent = t("impDone");
+    setTimeout(function(){ btn.textContent = t("impBtn"); }, 2000);
+  }
+  function legacy(){
+    var ta = document.createElement("textarea"), ok = false;
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.top = "0"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    if (ok) { done(); return; }
+    // Ultima strada: il testo compare, già selezionato, da copiare a mano.
+    var fb = $("rulefallback");
+    fb.value = text;
+    fb.hidden = false;
+    $("copymsg").hidden = false;
+    fb.focus();
+    fb.select();
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, legacy);
+  else legacy();
+}
+
+listen("tiles-v", "v");
+listen("tiles-q", "q");
+listen("tiles-p", "p");
+document.querySelectorAll('input[name="kind"]').forEach(function(r){
+  r.addEventListener("change", function(){ setKind(r.value); });
+});
+$("langs").addEventListener("click", function(e){
+  var a = e.target.closest("a[data-lang]");
+  if (!a || ON_PUBLIC_SITE) return;
+  e.preventDefault();
+  setLang(a.getAttribute("data-lang"));
+});
+// Il pannello della regola si chiude cliccando fuori o con Esc.
+document.addEventListener("click", function(e){
+  var imp = $("import");
+  if (imp.open && !imp.contains(e.target)) imp.open = false;
+});
+document.addEventListener("keydown", function(e){
+  var imp = $("import");
+  if (e.key === "Escape" && imp.open){ imp.open = false; imp.querySelector("summary").focus(); }
+});
+["v","q","p"].forEach(function(k){
+  $("w-" + k).addEventListener("input", function(e){
+    state.w[k] = W_STEPS[Number(e.target.value)];
+    render();
+  });
+});
+$("wreset").addEventListener("click", function(){
+  state.w = {v:1, q:1, p:1};
+  render();
+});
+$("wtoggle").addEventListener("click", function(){
+  var open = $("wtoggle").getAttribute("aria-expanded") !== "true";
+  $("wtoggle").setAttribute("aria-expanded", String(open));
+  $("weights").hidden = !open;
+});
+$("copyrule").addEventListener("click", copyRule);
+setLang(state.lang);
+</script>
+</body>
+</html>
